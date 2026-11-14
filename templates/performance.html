@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Model performance{% endblock %}
+{% block breadcrumb %}Model performance{% endblock %}
+{% block content %}
+<div class="page-intro"><div><div class="eyebrow"><span class="eyebrow-line"></span> BUILT ON A HELD-OUT TEST SET</div><h1>Model performance</h1><p>Three regression algorithms. One consistent 80/20 split. Compare how accurately each one learns from your data.</p></div><div class="intro-icon"><i class="bi bi-bar-chart-line"></i></div></div>
+<div class="best-banner"><div class="best-banner-icon"><i class="bi bi-trophy"></i></div><div><span>BEST PERFORMING MODEL</span><strong>{{ best_model_name }}</strong></div><div class="banner-detail">Highest R² score<br><small>among the three evaluated models</small></div></div>
+<div class="metric-cards">
+  {% for key, metric in metrics.items() %}
+  <article class="metric-card {% if key == best_model %}metric-card-best{% endif %}"><div class="metric-card-head"><span>{{ metric.name }}</span>{% if key == best_model %}<span class="winner-pill"><i class="bi bi-stars"></i> TOP MODEL</span>{% endif %}</div><div class="metric-values"><div><small>RMSE <span class="tooltip-mark" title="Root Mean Squared Error; lower is better">i</span></small><strong>₹{{ "{:,.0f}".format(metric.rmse) }}</strong></div><div><small>R² SCORE <span class="tooltip-mark" title="Coefficient of determination; closer to 1 is better">i</span></small><strong>{{ "%.3f"|format(metric.r2) }}</strong></div></div><div class="metric-track"><span style="width: {{ [((metric.r2 + 1) * 50), 100]|min|round|int }}%"></span></div></article>
+  {% endfor %}
+</div>
+<div class="chart-grid">
+  <section class="panel chart-panel"><div class="panel-heading"><div><div class="eyebrow">ERROR COMPARISON</div><h3>RMSE by model</h3></div><span class="chart-note">Lower is better</span></div><div class="chart-wrap"><canvas data-chart-id="rmse-chart"></canvas></div></section>
+  <section class="panel chart-panel"><div class="panel-heading"><div><div class="eyebrow">MODEL FIT</div><h3>R² score by model</h3></div><span class="chart-note">Higher is better</span></div><div class="chart-wrap"><canvas data-chart-id="r2-chart"></canvas></div></section>
+  <section class="panel chart-panel wide-chart"><div class="panel-heading"><div><div class="eyebrow">PREDICTION ACCURACY</div><h3>Actual vs predicted prices</h3></div><span class="chart-note">Each point is a held-out test record</span></div><div class="chart-wrap chart-wrap-tall"><canvas data-chart-id="scatter-chart"></canvas></div></section>
+  <section class="panel chart-panel"><div class="panel-heading"><div><div class="eyebrow">RANDOM FOREST</div><h3>Feature importance</h3></div><span class="chart-note">Relative contribution</span></div><div class="chart-wrap chart-wrap-tall"><canvas data-chart-id="importance-chart"></canvas></div></section>
+</div>
+<script type="application/json" id="performance-data">{{ {"metrics": metrics, "actual_vs_predicted": actual_vs_predicted, "feature_importance": feature_importance}|tojson }}</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Overview{% endblock %}
+{% block breadcrumb %}Overview{% endblock %}
+{% block content %}
+<div class="welcome-row">
+  <div><div class="eyebrow"><span class="eyebrow-line"></span> YOUR AUTOMOTIVE MARKET, DECODED</div><h1>Know what a car<br>is <span>really worth.</span></h1><p class="lead-copy">A smarter way to understand used-car value. Explore your data, compare machine learning models, and get a price estimate built on real listings.</p>
+    <div class="hero-actions"><a class="button button-primary" href="{{ url_for('predict_page') }}">Start a prediction <i class="bi bi-arrow-up-right"></i></a><a class="button button-quiet" href="{{ url_for('performance_page') }}">Explore the models <i class="bi bi-arrow-right"></i></a></div>
+  </div>
+  <div class="hero-visual" aria-hidden="true"><div class="hero-glow"></div><div class="hero-ring ring-one"></div><div class="hero-ring ring-two"></div><div class="hero-orbit"><span></span><span></span><span></span></div><div class="hero-car"><i class="bi bi-car-front-fill"></i></div><div class="hero-tag"><span class="tag-icon"><i class="bi bi-graph-up-arrow"></i></span><span><small>MODEL INSIGHT</small><strong>{% if best_model %}{{ best_model }}{% else %}Awaiting training{% endif %}</strong></span></div><div class="hero-metric"><small>ESTIMATE ENGINE</small><strong>01 <span>/ 03</span></strong></div></div>
+</div>
+{% if artifact_error %}
+<div class="notice notice-error"><i class="bi bi-exclamation-circle"></i><div><strong>Training data is not ready yet</strong><br>{{ artifact_error }}<br>Once your CSV is in <code>dataset\</code>, run <code>python train_model.py</code> from this project directory.</div></div>
+{% endif %}
+<div class="section-heading"><div><div class="eyebrow">AT A GLANCE</div><h2>Your market snapshot</h2></div><span class="subtle-label">{% if source_file %}SOURCE · {{ source_file }}{% else %}YOUR DATA, YOUR INSIGHTS{% endif %}</span></div>
+<div class="stats-grid">
+  <article class="stat-card"><div class="stat-top"><span>DATASET RECORDS</span><i class="bi bi-database"></i></div><strong>{{ "{:,}".format(analysis.get('records', 0)) }}</strong><small>Listings analyzed</small><div class="stat-accent accent-blue"></div></article>
+  <article class="stat-card"><div class="stat-top"><span>INPUT FEATURES</span><i class="bi bi-sliders2"></i></div><strong>{{ analysis.get('feature_count', 0) }}</strong><small>Discovered from your CSV</small><div class="stat-accent accent-orange"></div></article>
+  <article class="stat-card"><div class="stat-top"><span>ALGORITHMS</span><i class="bi bi-cpu"></i></div><strong>03</strong><small>Regression models compared</small><div class="stat-accent accent-purple"></div></article>
+  <article class="stat-card stat-card-best"><div class="stat-top"><span>TOP PERFORMER</span><i class="bi bi-award"></i></div><strong class="best-name">{{ best_model or "Train models" }}</strong><small>Selected by held-out R² score</small><div class="stat-accent accent-orange"></div></article>
+</div>
+<div class="content-grid home-bottom">
+  <section class="panel panel-market">
+    <div class="panel-heading"><div><div class="eyebrow">MARKET PULSE</div><h3>Price landscape</h3></div><span class="tiny-chip"><i class="bi bi-dot"></i> REAL DATA</span></div>
+    {% if analysis.charts and analysis.charts.price %}
+    <div class="market-summary"><strong>₹{{ "{:,.0f}".format(analysis.get('average_price', 0)) }}</strong><span>Average {{ analysis.get('target_label', 'selling price')|lower }}</span><div class="range-pair"><span>LOW <b>₹{{ "{:,.0f}".format(analysis.get('minimum_price', 0)) }}</b></span><span>HIGH <b>₹{{ "{:,.0f}".format(analysis.get('maximum_price', 0)) }}</b></span></div></div>
+    <div class="chart-wrap chart-wrap-short"><canvas data-chart-id="home-price"></canvas></div>
+    <script type="application/json" id="home-chart-data">{{ analysis.charts.price|tojson }}</script>
+    {% else %}<div class="empty-chart"><i class="bi bi-bar-chart"></i><p>Train with a dataset to see the price landscape.</p></div>{% endif %}
+  </section>
+  <section class="panel panel-cta">
+    <div class="cta-orb"><i class="bi bi-stars"></i></div><div class="eyebrow">READY WHEN YOU ARE</div><h3>Make your next<br>move with confidence.</h3><p>Enter the details of a car and let your trained models estimate its market value.</p><a class="button button-primary" href="{{ url_for('predict_page') }}">Estimate a car price <i class="bi bi-arrow-up-right"></i></a><div class="cta-footer"><span><i class="bi bi-shield-check"></i> Data-backed estimates</span><span><i class="bi bi-lightning-charge"></i> Instant results</span></div>
+  </section>
+</div>
+{% endblock %}

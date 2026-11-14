@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a2b">
+  <title>{% block title %}UsedCar Intelligence{% endblock %} | Drivewise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand-lockup" href="{{ url_for('home') }}">
+        <span class="brand-mark"><i class="bi bi-speedometer2"></i></span>
+        <span><strong>drivewise</strong><small>PRICE INTELLIGENCE</small></span>
+      </a>
+      <div class="nav-caption">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}"><i class="bi bi-grid-1x2"></i><span>Overview</span></a>
+        <a href="{{ url_for('predict_page') }}" class="nav-link {% if request.endpoint == 'predict_page' %}active{% endif %}"><i class="bi bi-stars"></i><span>Price prediction</span><span class="nav-dot"></span></a>
+        <a href="{{ url_for('performance_page') }}" class="nav-link {% if request.endpoint == 'performance_page' %}active{% endif %}"><i class="bi bi-bar-chart-line"></i><span>Model performance</span></a>
+        <a href="{{ url_for('analysis_page') }}" class="nav-link {% if request.endpoint == 'analysis_page' %}active{% endif %}"><i class="bi bi-pie-chart"></i><span>Dataset analysis</span></a>
+        <a href="{{ url_for('history_page') }}" class="nav-link {% if request.endpoint == 'history_page' %}active{% endif %}"><i class="bi bi-clock-history"></i><span>Prediction history</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="status-card">
+          <span class="status-indicator {% if dataset_ready %}online{% else %}offline{% endif %}"></span>
+          <div><strong>{% if dataset_ready %}Models online{% else %}Models not trained{% endif %}</strong><small>{% if dataset_ready %}Ready for predictions{% else %}Train to get started{% endif %}</small></div>
+        </div>
+        <div class="sidebar-foot">USED CAR PRICE PREDICTION<br>Machine learning project</div>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open navigation"><i class="bi bi-list"></i></button>
+        <div class="breadcrumb"><span>Workspace</span><i class="bi bi-chevron-right"></i><strong>{% block breadcrumb %}Overview{% endblock %}</strong></div>
+        <div class="topbar-right"><span class="live-pill"><span></span> LIVE WORKSPACE</span><div class="avatar">DW</div></div>
+      </header>
+      <section class="page-content">
+        {% if artifact_error and request.endpoint != 'home' %}
+        <div class="notice notice-error"><i class="bi bi-exclamation-circle"></i><span>{{ artifact_error }} From the project folder run <code>python train_model.py</code>.</span></div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </section>
+      <footer class="page-footer"><span>DRIVEWISE <span class="footer-divider">/</span> USED CAR PRICE INTELLIGENCE</span><span>Built with data, driven by insight.</span></footer>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

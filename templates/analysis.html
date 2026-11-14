@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Dataset analysis{% endblock %}
+{% block breadcrumb %}Dataset analysis{% endblock %}
+{% block content %}
+<div class="page-intro"><div><div class="eyebrow"><span class="eyebrow-line"></span> THE DATA BEHIND THE ESTIMATE</div><h1>Dataset analysis</h1><p>Explore the distribution and shape of the real-world listings used to train your models.</p></div><div class="intro-icon"><i class="bi bi-pie-chart"></i></div></div>
+<div class="dataset-source"><i class="bi bi-file-earmark-spreadsheet"></i><span>ACTIVE DATA SOURCE</span><strong>{{ source_file }}</strong><span class="source-tag"><i class="bi bi-check2-circle"></i> ANALYZED</span></div>
+<div class="stats-grid analysis-stats">
+  <article class="stat-card"><div class="stat-top"><span>RECORDS</span><i class="bi bi-database"></i></div><strong>{{ "{:,}".format(analysis.records) }}</strong><small>Clean listings used for training</small><div class="stat-accent accent-blue"></div></article>
+  <article class="stat-card"><div class="stat-top"><span>CAR FEATURES</span><i class="bi bi-sliders2"></i></div><strong>{{ analysis.feature_count }}</strong><small>Selected from actual columns</small><div class="stat-accent accent-purple"></div></article>
+  <article class="stat-card"><div class="stat-top"><span>AVERAGE PRICE</span><i class="bi bi-currency-rupee"></i></div><strong>₹{{ "{:,.0f}".format(analysis.average_price) }}</strong><small>Average {{ analysis.target_label|lower }}</small><div class="stat-accent accent-orange"></div></article>
+  <article class="stat-card"><div class="stat-top"><span>PRICE RANGE</span><i class="bi bi-arrows-expand"></i></div><strong class="range-stat">₹{{ "{:,.0f}".format(analysis.minimum_price) }} <span>—</span> ₹{{ "{:,.0f}".format(analysis.maximum_price) }}</strong><small>Minimum to maximum observed</small><div class="stat-accent accent-green"></div></article>
+</div>
+<div class="chart-grid analysis-chart-grid">
+  <section class="panel chart-panel wide-chart"><div class="panel-heading"><div><div class="eyebrow">TARGET VARIABLE</div><h3>{{ analysis.target_label }} distribution</h3></div><span class="chart-note">All cleaned records</span></div><div class="chart-wrap chart-wrap-tall"><canvas data-chart-id="analysis-price"></canvas></div></section>
+  {% if analysis.charts.fuel %}<section class="panel chart-panel"><div class="panel-heading"><div><div class="eyebrow">FUEL TYPES</div><h3>Fuel mix</h3></div><span class="chart-note">Listing count</span></div><div class="chart-wrap chart-wrap-tall"><canvas data-chart-id="analysis-fuel"></canvas></div></section>{% endif %}
+  {% if analysis.charts.brand %}<section class="panel chart-panel"><div class="panel-heading"><div><div class="eyebrow">BRAND LANDSCAPE</div><h3>Top brands</h3></div><span class="chart-note">Most listings</span></div><div class="chart-wrap chart-wrap-tall"><canvas data-chart-id="analysis-brand"></canvas></div></section>{% endif %}
+  {% if analysis.charts.year %}<section class="panel chart-panel"><div class="panel-heading"><div><div class="eyebrow">MODEL YEAR</div><h3>Year distribution</h3></div><span class="chart-note">Listing count</span></div><div class="chart-wrap"><canvas data-chart-id="analysis-year"></canvas></div></section>{% endif %}
+  {% if analysis.charts.distance %}<section class="panel chart-panel"><div class="panel-heading"><div><div class="eyebrow">USAGE PROFILE</div><h3>Distance travelled</h3></div><span class="chart-note">Kilometres</span></div><div class="chart-wrap"><canvas data-chart-id="analysis-distance"></canvas></div></section>{% endif %}
+</div>
+<script type="application/json" id="analysis-data">{{ analysis.charts|tojson }}</script>
+{% endblock %}

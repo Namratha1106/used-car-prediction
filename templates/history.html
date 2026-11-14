@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Prediction history{% endblock %}
+{% block breadcrumb %}Prediction history{% endblock %}
+{% block content %}
+<div class="page-intro"><div><div class="eyebrow"><span class="eyebrow-line"></span> YOUR VALUATION JOURNAL</div><h1>Prediction history</h1><p>Every estimate, saved in one place. Your history is stored locally in the project SQLite database.</p></div><div class="intro-icon"><i class="bi bi-clock-history"></i></div></div>
+<section class="panel history-panel">
+  <div class="panel-heading"><div><div class="eyebrow">SAVED ESTIMATES</div><h3>{{ predictions|length }} prediction{{ '' if predictions|length == 1 else 's' }}</h3></div>{% if predictions %}<button class="button button-outline button-small" id="clearHistory"><i class="bi bi-trash3"></i> Clear history</button>{% endif %}</div>
+  {% if predictions %}
+  <div class="table-scroll"><table class="history-table"><thead><tr><th>VEHICLE DETAILS</th><th>MODEL</th><th>PREDICTED PRICE</th><th>DATE &amp; TIME</th></tr></thead><tbody>
+  {% for prediction in predictions %}
+  <tr><td><div class="history-vehicle"><span class="vehicle-icon"><i class="bi bi-car-front"></i></span><div>{% for key, value in prediction.car_details.items() %}<span class="detail-chip"><b>{{ key|replace('_', ' ') }}</b> {{ value }}</span>{% endfor %}</div></div></td><td><span class="model-chip"><i class="bi bi-cpu"></i> {{ prediction.model_name }}</span></td><td class="history-price">₹{{ "{:,.0f}".format(prediction.predicted_price) }}</td><td class="history-date">{{ prediction.created_at|replace('T', ' ') }}</td></tr>
+  {% endfor %}
+  </tbody></table></div>
+  {% else %}
+  <div class="history-empty"><div class="empty-icon"><i class="bi bi-journal-check"></i></div><h3>No predictions yet</h3><p>Once you create your first estimate, it will be saved here.</p><a class="button button-primary" href="{{ url_for('predict_page') }}">Create a prediction <i class="bi bi-arrow-right"></i></a></div>
+  {% endif %}
+</section>
+<div class="toast-message" id="historyToast" role="status" hidden></div>
+{% endblock %}

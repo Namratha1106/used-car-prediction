@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Application error{% endblock %}
+{% block breadcrumb %}Error{% endblock %}
+{% block content %}
+<div class="history-empty error-empty"><div class="empty-icon"><i class="bi bi-exclamation-triangle"></i></div><h1>We hit a snag.</h1><p>{{ message }}</p><a class="button button-primary" href="{{ url_for('home') }}">Back to overview</a></div>
+{% endblock %}
